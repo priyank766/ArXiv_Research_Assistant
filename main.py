@@ -14,7 +14,7 @@ import streamlit as st
 
 
 from openai import OpenAI
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 model_client = OpenAIChatCompletionClient(
     model="gemini-1.5-flash-8b",
