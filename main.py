@@ -13,7 +13,7 @@ import asyncio
 import streamlit as st
 
 
-import OpenAI
+from openai import OpenAI
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 model_client = OpenAIChatCompletionClient(
