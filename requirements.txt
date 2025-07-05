@@ -3,5 +3,4 @@ autogen-core
 autogen-ext
 streamlit
 arxiv
-openai
 tiktoken
