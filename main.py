@@ -12,10 +12,6 @@ import asyncio
 
 import streamlit as st
 
-
-from openai import OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 model_client = OpenAIChatCompletionClient(
     model="gemini-1.5-flash-8b",
     api_key=gemini_api_key.strip() if (gemini_api_key := os.getenv("GEMINI_API_KEY")) else None,
