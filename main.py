@@ -1,7 +1,6 @@
 import os
 
 from autogen_agentchat.agents import AssistantAgent
-from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.conditions import TextMessageTermination
 from autogen_agentchat.ui import Console
@@ -12,10 +11,18 @@ import asyncio
 
 import streamlit as st
 
-model_client = OpenAIChatCompletionClient(
-    model="gemini-1.5-flash-8b",
-    api_key=gemini_api_key.strip() if (gemini_api_key := os.getenv("GEMINI_API_KEY")) else None,
-)
+# New llm_config for Gemini
+gemini_llm_config = {
+    "config_list": [
+        {
+            "model": "gemini-1.5-flash",  # Or "gemini-1.5-pro"
+            "api_key": os.environ.get("GEMINI_API_KEY"),
+            "api_type": "google",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        }
+    ],
+    "temperature": 0.7, # Optional: Adjust as needed
+}
 
 def search_arxiv(query: str, max_results: int = 5) -> List[Dict]:
     """
@@ -61,7 +68,7 @@ def search_arxiv(query: str, max_results: int = 5) -> List[Dict]:
 researcher_agent = AssistantAgent(
     name="ResearcherAgent",
     description="Create arxiv search and search for relevant research papers.then call the SummaryAgent to summarize the results",
-    model_client=model_client,
+    llm_config=gemini_llm_config,
     tools=[search_arxiv],
     system_message=(
         "You are an expert researcher. think of best arxiv query for the given user topic.in json format\n"
@@ -78,7 +85,7 @@ researcher_agent = AssistantAgent(
 summary_agent = AssistantAgent(
     name="SummaryAgent",
     description="An agent that summarizes the content of a given document's content in a literature-review style and markdown format.",
-    model_client=model_client,
+    llm_config=gemini_llm_config,
     system_message=(
          "You are an expert summary writer. When you receive the JSON list of papers, write a literature-review style report in Markdown format:\n"
          "1. Start with a 1-2 lines introduction of the topic.\n"
@@ -199,7 +206,7 @@ with st.container():
     if st.button("Find Research Paper"):
         if gemini_api_key and gemini_api_key.strip():
             os.environ["GEMINI_API_KEY"] = gemini_api_key.strip()
-            model_client.api_key = gemini_api_key.strip()
+
 
             if task and task.strip():
                 with st.spinner("Searching for relevant papers..."):
