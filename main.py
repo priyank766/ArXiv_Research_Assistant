@@ -13,10 +13,9 @@ import asyncio
 import streamlit as st
 
 model_client = OpenAIChatCompletionClient(
-    model="gemini-1.5-flash", # Use a Gemini model name
-    api_key=os.environ.get("GEMINI_API_KEY"), # Read from environment variable
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/", # Gemini's OpenAI-compatible endpoint
-    
+    model="gemini-1.5-flash", 
+    api_key=os.environ.get("GEMINI_API_KEY"), 
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
 def search_arxiv(query: str, max_results: int = 5) -> List[Dict]:
@@ -63,7 +62,7 @@ def search_arxiv(query: str, max_results: int = 5) -> List[Dict]:
 researcher_agent = AssistantAgent(
     name="ResearcherAgent",
     description="Create arxiv search and search for relevant research papers.then call the SummaryAgent to summarize the results",
-    model_client=model_client, # Reverted to model_client
+    model_client=model_client, 
     tools=[search_arxiv],
     system_message=(
         "You are an expert researcher. think of best arxiv query for the given user topic.in json format\n"
@@ -80,7 +79,7 @@ researcher_agent = AssistantAgent(
 summary_agent = AssistantAgent(
     name="SummaryAgent",
     description="An agent that summarizes the content of a given document's content in a literature-review style and markdown format.",
-    model_client=model_client, # Reverted to model_client
+    model_client=model_client, 
     system_message=(
          "You are an expert summary writer. When you receive the JSON list of papers, write a literature-review style report in Markdown format:\n"
          "1. Start with a 1-2 lines introduction of the topic.\n"
